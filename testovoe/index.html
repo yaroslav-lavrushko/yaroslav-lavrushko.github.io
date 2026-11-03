@@ -1,0 +1,823 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Лаврушко Ярослав — тестовое задание</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F5F2EC; --card:#FCFBF8; --ink:#1D1C1A; --ink2:#3E3B36; --muted:#77716A;
+  --line:#E0D9CD; --soft:#ECE6DB; --red:#B3412A; --red-soft:#F3E1DA; --green:#2E6B4E; --green-soft:#DEEBE2;
+  --amber:#A8741A; --amber-soft:#F2E7D1;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#E9E4DA;color:var(--ink);font-family:"Golos Text",-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+body{overflow:hidden}
+.num,td,.big{font-variant-numeric:tabular-nums}
+
+/* сцена 1280×720, масштабируется под окно */
+#stage{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center center}
+.slide{position:absolute;inset:0;background:var(--paper);padding:52px 64px 60px;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .25s ease;box-shadow:0 10px 40px rgba(40,30,10,.10)}
+.slide.active{opacity:1;pointer-events:auto}
+.kicker{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:10px}
+.kicker b{color:var(--red);font-weight:600}
+h1{font-size:54px;line-height:1.05;font-weight:700;letter-spacing:-.02em}
+h2{font-size:34px;line-height:1.12;font-weight:650;letter-spacing:-.015em;max-width:1050px}
+h3{font-size:17px;font-weight:600;margin-bottom:8px}
+p,li{font-size:16px;line-height:1.45;color:var(--ink2)}
+.lead{font-size:18px;color:var(--ink2);margin-top:10px;max-width:1000px}
+.foot{position:absolute;left:64px;right:64px;bottom:22px;display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.body{flex:1;display:flex;gap:36px;margin-top:26px;min-height:0}
+.col{flex:1;min-width:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.muted{color:var(--muted)}
+.red{color:var(--red)} .green{color:var(--green)}
+ul.clean{list-style:none}
+ul.clean li{position:relative;padding-left:16px;margin-bottom:7px}
+ul.clean li:before{content:"";position:absolute;left:0;top:.62em;width:6px;height:6px;border-radius:50%;background:var(--ink2);opacity:.5}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:3px 8px;border-radius:4px;letter-spacing:.02em}
+.tag.r{background:var(--red-soft);color:var(--red)} .tag.g{background:var(--green-soft);color:var(--green)} .tag.a{background:var(--amber-soft);color:var(--amber)} .tag.n{background:var(--soft);color:var(--ink2)}
+.note{font-size:13px;color:var(--muted);line-height:1.4}
+.proof{border-left:3px solid var(--green);padding:6px 0 6px 14px;font-size:14px;color:var(--ink2);line-height:1.45}
+.proof b{color:var(--green)}
+
+/* обложка */
+.cover{padding:60px 64px}
+.cover .grid{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;flex:1;margin-top:8px}
+.cover .who{margin-top:26px;font-size:16px;color:var(--ink2);line-height:1.6}
+.cover .who b{font-weight:600;color:var(--ink)}
+.sum{counter-reset:s}
+.sum li{list-style:none;display:grid;grid-template-columns:30px 1fr;gap:6px;padding:11px 0;border-top:1px solid var(--line);font-size:15px;line-height:1.42}
+.sum li:last-child{border-bottom:1px solid var(--line)}
+.sum li:before{counter-increment:s;content:counter(s);font-weight:700;color:var(--red);font-size:15px}
+.sum li b{color:var(--ink);font-weight:600}
+.printonly{display:none}
+@media print{.printonly{display:block}}
+.hint{font-size:13px;color:var(--muted);margin-top:auto}
+.hint kbd{font-family:inherit;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:1px 6px;background:var(--card);font-size:12px}
+
+/* таблица задания 1 */
+table.fin{width:100%;border-collapse:collapse;font-size:15.5px}
+table.fin th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:500;text-align:right;padding:0 10px 8px;border-bottom:1px solid var(--ink)}
+table.fin th:first-child{text-align:left;padding-left:0}
+table.fin td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+table.fin td:first-child{text-align:left;padding-left:0;white-space:normal;color:var(--ink2)}
+table.fin td small{display:block;font-size:12px;color:var(--muted)}
+table.fin tr.total td{font-weight:700;font-size:17px;border-bottom:2px solid var(--ink);color:var(--ink)}
+table.fin tr.sub td{font-weight:600;color:var(--ink)}
+.toggle{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--card)}
+.toggle button{border:0;background:none;font:inherit;font-size:13px;padding:6px 11px;color:var(--muted);cursor:pointer}
+.toggle button.on{background:var(--ink);color:#fff}
+.say p{margin-bottom:12px}
+.say p b{color:var(--ink)}
+.bigline{font-size:40px;font-weight:700;letter-spacing:-.02em;line-height:1}
+
+/* водопад */
+.wf svg{width:100%;height:auto;display:block}
+.wf .bar{transition:opacity .15s}
+.wf .bar:hover{opacity:.8}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:#fff;font-size:13px;padding:8px 10px;border-radius:6px;max-width:240px;line-height:1.35;opacity:0;transition:opacity .1s;z-index:5}
+
+/* симулятор */
+.sim{display:grid;grid-template-columns:1fr 1fr;gap:14px 22px}
+.sim label{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+.sim label span{float:right;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--ink)}
+.presets{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.presets button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--card);border-radius:6px;padding:6px 10px;cursor:pointer;color:var(--ink2)}
+.presets button.on{border-color:var(--ink);color:var(--ink);font-weight:600}
+.result{display:flex;align-items:flex-end;gap:22px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.result .big{font-size:46px;font-weight:700;letter-spacing:-.02em;line-height:1}
+.act{display:grid;grid-template-columns:34px 1fr;gap:4px 10px;margin-bottom:16px}
+.act .n{font-size:26px;font-weight:700;color:var(--red);line-height:1}
+.act h3{margin:0 0 3px}
+.act p{font-size:14.5px}
+
+/* сегментация */
+.matrix{display:grid;grid-template-columns:96px repeat(3,1fr);grid-template-rows:repeat(2,1fr) 34px;gap:6px;height:290px}
+.matrix .ax{font-size:12px;color:var(--muted);display:flex;align-items:center;line-height:1.25}
+.matrix .ax.x{justify-content:center;text-align:center}
+.cell{border-radius:8px;padding:10px 12px;font-size:14px;font-weight:600;cursor:pointer;border:2px solid transparent;transition:transform .12s,border-color .12s;display:flex;flex-direction:column;justify-content:space-between}
+.cell small{font-weight:400;font-size:12px;opacity:.85}
+.cell:hover,.cell.hl{border-color:var(--ink)}
+.cA{background:#D5E7DB;color:#1F5039}.cB{background:#E7EEDF;color:#3E5A2B}.cD{background:#F2E3C8;color:#7A5410}.cE{background:#EFD3CA;color:#8A2E1C}
+.groups .g{display:grid;grid-template-columns:28px 1fr;gap:2px 10px;padding:9px 8px;border-radius:8px;border:1px solid transparent;cursor:default;transition:background .12s}
+.groups .g.hl{background:var(--card);border-color:var(--line)}
+.groups .g .l{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;margin-top:2px}
+.groups .g h3{font-size:15px;margin:0}
+.groups .g p{font-size:13.5px;line-height:1.38}
+.groups .g p i{font-style:normal;color:var(--muted)}
+
+/* лестница и калькулятор */
+.ladder{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.step{border-top:3px solid var(--ink);padding-top:10px}
+.step .w{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.step h3{font-size:16px;margin:4px 0 6px}
+.step li{font-size:13.5px;margin-bottom:5px}
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
+.calc label{font-size:12.5px;color:var(--muted);display:block;margin-bottom:3px}
+.calc input[type=number]{width:100%;font:inherit;font-size:15px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* стоки-полоса */
+.stockbar{display:flex;height:34px;border-radius:6px;overflow:hidden;font-size:13px;font-weight:600}
+.stockbar div{display:flex;align-items:center;justify-content:center;color:#fff}
+
+/* 90 дней */
+.tl{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;flex:1}
+.ph{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 16px 12px;display:flex;flex-direction:column}
+.ph .d{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--red);font-weight:600}
+.ph h3{font-size:18px;margin:4px 0 10px}
+.ph .sec{font-size:12px;color:var(--muted);margin:8px 0 4px;text-transform:uppercase;letter-spacing:.05em}
+.ph li{font-size:13.5px;line-height:1.38;margin-bottom:5px}
+.bar90{height:6px;border-radius:3px;background:var(--soft);margin-bottom:12px;position:relative;overflow:hidden}
+.bar90 i{position:absolute;top:0;bottom:0;background:var(--ink)}
+
+table.kpi{width:100%;border-collapse:collapse;font-size:15px}
+table.kpi td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+table.kpi td:first-child{padding-left:0;color:var(--ink2)}
+table.kpi td.from{color:var(--muted);text-align:right;white-space:nowrap}
+table.kpi td.to{font-weight:700;white-space:nowrap}
+.rights{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.rights h3{display:flex;align-items:center;gap:8px}
+.rights li{font-size:14px}
+
+/* оргструктура */
+.org{display:flex;flex-direction:column;align-items:center;gap:0}
+.org .box{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:9px 18px;font-size:14px;font-weight:600;text-align:center}
+.org .box.me{background:var(--ink);color:#fff;border-color:var(--ink)}
+.org .vl{width:1px;height:16px;background:var(--ink);opacity:.4}
+.fns{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%;position:relative;padding-top:16px}
+.fns:before{content:"";position:absolute;top:0;left:12.5%;right:12.5%;height:1px;background:rgba(29,28,26,.4)}
+.fn{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 14px 10px;position:relative;transition:border-color .12s,box-shadow .12s}
+.fn:before{content:"";position:absolute;top:-16px;left:50%;width:1px;height:16px;background:rgba(29,28,26,.4)}
+.fn:hover{border-color:var(--ink);box-shadow:0 4px 18px rgba(0,0,0,.06)}
+.fn h3{font-size:16px;margin-bottom:2px}
+.fn .who{font-size:12.5px;color:var(--muted);margin-bottom:8px;line-height:1.35}
+.fn .k{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--red);font-weight:600;margin:6px 0 4px}
+.fn li{font-size:13.5px;margin-bottom:4px}
+
+table.rhythm{width:100%;border-collapse:collapse;font-size:14.5px}
+table.rhythm th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:500;text-align:left;padding:0 10px 7px 0;border-bottom:1px solid var(--ink)}
+table.rhythm td{padding:9px 10px 9px 0;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink2);line-height:1.38}
+table.rhythm td:first-child{font-weight:600;color:var(--ink);white-space:nowrap}
+ol.auto{list-style:none;counter-reset:a}
+ol.auto li{counter-increment:a;display:grid;grid-template-columns:26px 1fr;font-size:14.5px;margin-bottom:8px}
+ol.auto li:before{content:counter(a);font-weight:700;color:var(--red)}
+
+/* горизонты */
+.hz{display:grid;grid-template-columns:repeat(3,1fr);gap:0;flex:1;border-top:1px solid var(--ink)}
+.hz>div{padding:18px 22px 0;border-left:1px solid var(--line)}
+.hz>div:first-child{border-left:0;padding-left:0}
+.hz .t{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--red);font-weight:600}
+.hz h3{font-size:22px;margin:4px 0 16px}
+.hz .it{margin-bottom:16px}
+.hz .it b{display:block;font-size:16px;margin-bottom:3px;color:var(--ink)}
+.hz .it p{font-size:14.5px}
+
+/* финал */
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.fact{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.fact .v{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.05}
+.fact .v small{font-size:15px;font-weight:500;color:var(--muted);letter-spacing:0}
+.fact p{font-size:13.5px;margin-top:8px;line-height:1.38}
+.fact .s{font-size:12px;color:var(--green);font-weight:600;margin-top:6px}
+
+/* навигация */
+#nav{position:fixed;right:18px;bottom:14px;display:flex;align-items:center;gap:8px;z-index:20;font-size:13px;color:var(--muted)}
+#nav button{font:inherit;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--card);cursor:pointer;color:var(--ink);font-size:16px}
+#nav button:hover{border-color:var(--ink)}
+#toc-btn{width:auto!important;border-radius:17px!important;padding:0 12px;font-size:13px!important}
+#prog{position:fixed;left:0;top:0;height:3px;background:var(--red);z-index:20;transition:width .25s}
+#toc{position:fixed;right:18px;bottom:58px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px;box-shadow:0 10px 30px rgba(0,0,0,.12);display:none;z-index:21;max-height:80vh;overflow:auto}
+#toc.open{display:block}
+#toc a{display:grid;grid-template-columns:26px 1fr;padding:6px 10px;font-size:13.5px;color:var(--ink2);text-decoration:none;border-radius:6px}
+#toc a:hover{background:var(--soft)}
+#toc a span{color:var(--muted)}
+
+/* узкий экран: слайды лентой */
+body.scroll{overflow-y:auto;overflow-x:hidden;background:var(--paper)}
+body.scroll .col,body.scroll .card,body.scroll .ph,body.scroll .fn{width:100%;min-width:0}
+body.scroll .toggle{flex-wrap:wrap}
+body.scroll #stage{position:static;width:auto;height:auto;transform:none!important}
+body.scroll .slide{position:relative;opacity:1;pointer-events:auto;box-shadow:none;padding:32px 16px 48px;border-bottom:8px solid #E9E4DA;inset:auto}
+body.scroll .body,body.scroll .cover .grid,body.scroll .rights,body.scroll .facts,body.scroll .ladder,body.scroll .hz,body.scroll .tl,body.scroll .fns,body.scroll .sim,body.scroll .calc{display:flex;flex-direction:column}
+body.scroll .hz>div{border-left:0;padding-left:0}
+body.scroll .fns:before,body.scroll .fn:before{display:none}
+body.scroll h1{font-size:36px} body.scroll h2{font-size:26px}
+body.scroll .foot{position:static;margin-top:20px}
+body.scroll #nav,body.scroll #prog{display:none}
+body.scroll table.fin{font-size:13px} body.scroll table.fin td{padding:7px 4px}
+body.scroll .matrix{height:260px;grid-template-columns:70px repeat(3,1fr)}
+body.scroll .cell small{display:none}
+
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{background:var(--paper);overflow:visible;height:auto}
+  #stage{position:static;transform:none!important;width:1280px;height:auto}
+  .slide{position:relative;opacity:1;width:1280px;height:720px;box-shadow:none;page-break-after:always;break-after:page;inset:auto}
+  #nav,#prog,#toc,.tip,.hint{display:none!important}
+  .slide:last-of-type{page-break-after:auto;break-after:auto}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+<div id="stage">
+
+<!-- 1. Обложка -->
+<section class="slide cover" data-title="Коротко о главном">
+  <div class="kicker">Тестовое задание · Операционный руководитель проекта одежды на маркетплейсах</div>
+  <div class="grid">
+    <div style="display:flex;flex-direction:column">
+      <h1>Выручка растёт,<br>прибыль падает.<br>Что я бы сделал</h1>
+      <div class="who"><b>Лаврушко Ярослав</b><br>Директор торговой компании на Wildberries и Ozon<br>3 ноября 2026</div>
+      <div class="printonly" style="margin-top:auto;font-size:15px;color:var(--ink2);line-height:1.5">Интерактивная версия — цифры на слайдах 2, 5 и 8 можно менять:<br><a href="https://yaroslav-lavrushko.github.io/testovoe/" style="color:var(--red);font-weight:600">https://yaroslav-lavrushko.github.io/testovoe/</a></div>
+      <div class="hint">Листать — <kbd>←</kbd> <kbd>→</kbd> или кнопками справа внизу. На слайдах 2, 5 и 8 цифры можно менять.</div>
+    </div>
+    <div>
+      <div class="kicker" style="margin-bottom:4px">Коротко по пяти заданиям</div>
+      <ol class="sum">
+        <li><div><b>Финансы.</b> Выручка +25%, чистая прибыль 1,8 → 0,5 млн ₽. Рост оплачен рекламой и скидками. Если вернуть рекламу к 10% выручки, маржу к 38,5% и сократить возвраты, прибыль будет около 2,4 млн при той же выручке и около 1,9 млн, даже если выручка вернётся к 20.</div></li>
+        <li><div><b>Склад.</b> Запаса на 5 месяцев, сезона осталось на 2. Делю модели на 4 группы, отдельно отмечаю те, где много возвратов. Распродаю ступенями скидок за 8 недель, закупку планирую двумя волнами с учётом сроков фабрики.</div></li>
+        <li><div><b>90 дней.</b> В первую неделю — срочное по складу и рекламе. К 30-му дню правила рекламы и цены, к 60-му регламенты и KPI. К 90-му чистая маржа от 8% выручки — около 1,5 млн в месяц.</div></li>
+        <li><div><b>Команда.</b> За каждую цифру отвечает один человек. Неделя начинается с прибыли по моделям, все задачи ведутся в одном трекере.</div></li>
+        <li><div><b>Одежда.</b> Здесь решают три вещи: ходовые размеры в наличии, процент выкупа и сколько денег лежит в товаре.</div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Задание 1: расчёт -->
+<section class="slide" data-title="Задание 1. Расчёт">
+  <div class="kicker"><b>Задание 1</b> · Финансовые показатели</div>
+  <h2>Выручка выросла на 25%, а чистая прибыль упала в 3,6 раза</h2>
+  <div class="body">
+    <div class="col" style="flex:1.25">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span class="note">млн ₽, под цифрой — доля от выручки, п.п. — процентные пункты</span>
+        <div class="toggle" id="taxT"><button data-m="rev" class="on">Налог 6% с выручки</button><button data-m="pro">6% с прибыли</button></div>
+      </div>
+      <table class="fin" id="finT"></table>
+      <p class="note" style="margin-top:10px" id="taxNote">В задании база налога не указана, считаю 6% со всей выручки, как на УСН «доходы». НДС на таких оборотах поставлю отдельной строкой, когда увижу ваш режим: он одинаково уменьшает прибыль до и после изменений, эффект действий не меняется. Все цели в презентации — до НДС.</p>
+    </div>
+    <div class="col say">
+      <h3>Что происходит с экономикой</h3>
+      <p><b>Дополнительные 5 млн выручки принесли убыток.</b> Они дали +1 млн маржинального дохода, а реклама за тот же месяц выросла на 1,5 млн. Если весь прирост дала реклама, каждый новый рубль выручки обошёлся в 30 копеек рекламы — втрое дороже, чем в среднем в прошлом месяце (10 копеек на рубль).</p>
+      <p><b>Маржа до рекламы просела с 40 до 36%.</b> Похоже, рост шёл через скидки, акции площадки или более дешёвые модели.</p>
+      <p><b>Логистика — единственная строка, которая стала лучше:</b> 15 → 14% выручки.</p>
+      <p><b>Запаса прочности нет.</b> Чистая маржа 2%: ещё 2% выручки на рекламу, и бизнес работает в ноль.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Лаврушко Ярослав · Тестовое задание</span><span class="pg"></span></div>
+</section>
+
+<!-- 3. Задание 1: водопад -->
+<section class="slide" data-title="Задание 1. Куда ушла прибыль">
+  <div class="kicker"><b>Задание 1</b> · Динамика</div>
+  <h2>Куда ушли 1,3 млн: маржа и реклама забрали по миллиону</h2>
+  <div class="body">
+    <div class="col wf" style="flex:1.5;position:relative">
+      <svg id="wf" viewBox="0 0 720 380"></svg>
+      <div class="tip" id="wfTip"></div>
+    </div>
+    <div class="col say" style="flex:.9">
+      <h3>Как читать</h3>
+      <p>Если бы затраты остались в прежних долях, при 25 млн выручки прибыль была бы <b>2,25 млн</b>. Рост сам по себе работал в плюс.</p>
+      <p>Но маржа просела на 4 п.п., а реклама выросла на 4 п.п. выручки. Каждая из этих строк стоила около <b>1 млн</b>.</p>
+      <p>Логистика немного помогла: её доля в выручке снизилась, это плюс 0,25 млн.</p>
+      <p class="note">Наведите на столбец — там расчёт.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Лаврушко Ярослав · Тестовое задание</span><span class="pg"></span></div>
+</section>
+
+<!-- 4. Задание 1: причины, риски, данные -->
+<section class="slide" data-title="Задание 1. Причины и риски">
+  <div class="kicker"><b>Задание 1</b> · Причины, риски, данные</div>
+  <h2>Что могло так сдвинуть цифры и чем это опасно</h2>
+  <div class="body" style="gap:28px">
+    <div class="col">
+      <h3>Возможные причины, проверю первыми</h3>
+      <ul class="clean">
+        <li>Участие в акциях площадки с обязательной скидкой: оборот растёт, маржа падает.</li>
+        <li>Продажи сместились в дешёвые модели или в распродажу старых остатков.</li>
+        <li>Новая партия пришла дороже: курс, фабрика, доставка.</li>
+        <li>Реклама расширилась на широкие запросы и слабые карточки. В сезон конкуренты поднимают ставки.</li>
+        <li>Реклама крутит модели с низким выкупом: заказы есть, денег нет.</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h3>Риски</h3>
+      <ul class="clean">
+        <li><b>Прибыль может быть ещё ниже.</b> В одежде между заказом и итогом — выкупили или вернули — проходит 2–4 недели. Если в отчёте заказы, а не выкупы, часть возвратов за этот месяц придёт в следующем.</li>
+        <li><b>До нуля два шага.</b> Ещё 2% выручки на рекламу или маржа ниже на 2 пункта — и прибыли нет.</li>
+        <li><b>Кассовый разрыв.</b> Рост требует денег на товар, а прибыли на это почти нет.</li>
+        <li><b>Зависимость от рекламы.</b> Если органика не выросла, при урезании бюджета выручка вернётся к 20 млн.</li>
+      </ul>
+    </div>
+    <div class="col" style="flex:.95">
+      <h3>Каких данных не хватает</h3>
+      <div class="card" style="padding:14px 16px">
+        <ul class="clean" style="font-size:14px">
+          <li>Прибыль по моделям и каналам</li>
+          <li>Реклама по кампаниям: расход, заказы, выкуп</li>
+          <li>Доля заказов из рекламы и из органики</li>
+          <li>Выкуп и причины возвратов по моделям и размерам</li>
+          <li>Средняя цена продажи и глубина скидок</li>
+          <li>Себестоимость по партиям</li>
+          <li>Остатки, хранение, оборачиваемость</li>
+          <li>Движение денег, кредиты, отсрочки</li>
+          <li>Те же месяцы прошлого года — чтобы отделить сезон</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Лаврушко Ярослав · Тестовое задание</span><span class="pg"></span></div>
+</section>
+
+<!-- 5. Задание 1: действия + симулятор -->
+<section class="slide" data-title="Задание 1. Три действия">
+  <div class="kicker"><b>Задание 1</b> · Три первоочередных действия</div>
+  <h2>Три действия на ближайший месяц</h2>
+  <div class="body">
+    <div class="col">
+      <div class="act"><div class="n">1</div><div><h3>Реклама только с окупаемостью</h3><p>Каждую кампанию и ключевой запрос проверяю по прибыли после рекламы. Убыточные отключаю, на каждую модель ставлю лимит рекламных расходов от её маржи. <b>Реклама 14 → 10% выручки.</b></p></div></div>
+      <div class="act"><div class="n">2</div><div><h3>Вернуть маржу</h3><p>Разбираю, откуда минус 4 п.п.: скидки, акции, ассортимент, себестоимость. Ставлю минимальную цену на каждую модель. В акцию — только если после скидки остаётся прибыль. <b>Маржа 36 → 38,5%.</b></p></div></div>
+      <div class="act"><div class="n">3</div><div><h3>Убрать из рекламы модели с низким выкупом</h3><p>Модели с выкупом заметно ниже среднего снимаю с рекламы, правлю размерную сетку и карточку. Меньше возвратов — меньше обратной логистики. <b>Логистика и возвраты 14 → 13%.</b></p></div></div>
+      <div class="proof" style="margin-top:4px">В своей компании это правило снизило долю рекламы с <b>8% до 2,3%</b>, а продажи в штуках выросли с 2 502 до 4 456 в месяц. В одежде выкуп ниже и реклама дороже, поэтому цель — около 10%. Принцип тот же: реклама там, где после неё остаётся прибыль.</div>
+    </div>
+    <div class="col" style="flex:1.05">
+      <div class="card" style="padding:18px 20px">
+        <div class="presets" id="presets">
+          <button data-p="0" class="on">Сейчас</button>
+          <button data-p="1">После трёх действий</button>
+          <button data-p="2">Если выручка вернётся к 20 млн</button>
+        </div>
+        <div class="sim">
+          <div><label>Выручка, млн ₽ <span id="vRev"></span></label><input type="range" id="sRev" min="15" max="35" step="0.5"></div>
+          <div><label>Маржа до рекламы <span id="vMd"></span></label><input type="range" id="sMd" min="30" max="44" step="0.5"></div>
+          <div><label>Реклама, % выручки <span id="vAd"></span></label><input type="range" id="sAd" min="4" max="20" step="0.5"></div>
+          <div><label>Логистика и возвраты <span id="vLg"></span></label><input type="range" id="sLg" min="9" max="18" step="0.5"></div>
+        </div>
+        <div class="result">
+          <div><div class="note">Чистая прибыль в месяц</div><div class="big" id="oNet"></div></div>
+          <div style="padding-bottom:4px"><div class="note">Чистая маржа</div><div style="font-size:22px;font-weight:700" id="oPct"></div></div>
+          <div style="padding-bottom:4px;margin-left:auto;text-align:right"><div class="note">К текущим 0,5 млн</div><div style="font-size:22px;font-weight:700" id="oDelta"></div></div>
+        </div>
+        <p class="note" style="margin-top:10px" id="simNote"></p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Лаврушко Ярослав · Тестовое задание</span><span class="pg"></span></div>
+</section>
+
+<!-- 6. Задание 1: когда допустимо -->
+<section class="slide" data-title="Задание 1. Когда это допустимо">
+  <div class="kicker"><b>Задание 1</b> · Когда такие цифры допустимы</div>
+  <h2>Прибыль 2% можно терпеть месяц-два, если понятно, ради чего, и записано, когда реклама вернётся к норме</h2>
+  <div class="body" style="align-items:flex-start">
+    <div class="col card" style="border-top:3px solid var(--green)">
+      <h3 class="green">Допустимо</h3>
+      <ul class="clean">
+        <li><b>Вывод новой коллекции или хита в топ выдачи.</b> Реклама поднимает карточку, потом органика держит позиции и реклама снижается.</li>
+        <li><b>Распродажа остатков в конце сезона.</b> Цель — вернуть деньги, замороженные в товаре.</li>
+        <li><b>Пик сезона:</b> забрать покупателей у конкурентов, если товара и денег хватает, а срок возврата рекламы к норме записан заранее.</li>
+      </ul>
+      <p class="note" style="margin-top:8px">Условия: есть цель и срок, у хитов нет пустых размеров, денег хватает на закупку.</p>
+    </div>
+    <div class="col card" style="border-top:3px solid var(--red)">
+      <h3 class="red">Недопустимо</h3>
+      <ul class="clean">
+        <li><b>На зрелом ассортименте</b> — просто чтобы выручка росла.</li>
+        <li><b>Когда органика не растёт:</b> доля заказов из рекламы увеличивается месяц к месяцу.</li>
+        <li><b>При кредите или кассовом разрыве:</b> 2% прибыли не закрывают проценты.</li>
+        <li><b>Когда товара не хватает на спрос,</b> который разгоняет реклама: деньги уходят в пустые размеры.</li>
+        <li><b>Дольше двух месяцев,</b> и никто не знает, когда это закончится.</li>
+      </ul>
+    </div>
+    <div class="col" style="flex:.8;display:flex;flex-direction:column;justify-content:center">
+      <div class="kicker">Как отличить</div>
+      <p style="font-size:20px;line-height:1.4;color:var(--ink)">Сравниваю долю заказов без рекламы до разгона и через 2–4 недели после него, с поправкой на сезон по прошлому году.</p>
+      <p style="margin-top:12px">Ориентир — органика держит хотя бы половину прироста. Если не держит, выручку купили, и при отключении рекламы она уйдёт. Точную планку уточню на ваших данных.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Лаврушко Ярослав · Тестовое задание</span><span class="pg"></span></div>
+</section>
+
+<!-- 7. Задание 2: сегментация -->
+<section class="slide" data-title="Задание 2. Сегментация">
+  <div class="kicker"><b>Задание 2</b> · Ассортимент и запасы</div>
+  <h2>Запаса на 5 месяцев, сезона — на 2. Сортирую модели по прибыли и дням запаса</h2>
+  <div class="body" style="gap:30px">
+    <div class="col" style="flex:1.05">
+      <div class="stockbar" style="margin-bottom:6px"><div style="flex:2;background:var(--green)">≈2 мес продадим до конца сезона</div><div style="flex:3;background:var(--red)">≈3 мес остатка — риск хвоста</div></div>
+      <p class="note" style="margin-bottom:16px">Если продажи не ускорить, к концу сезона останется около 60% текущего запаса.</p>
+      <div class="matrix" id="mx">
+        <div class="ax">Маржа выше нормы</div>
+        <div class="cell cA" data-g="A">A · Хиты<small>докупать и продвигать</small></div>
+        <div class="cell cB" data-g="B">B · Основа<small>сохранить</small></div>
+        <div class="cell cD" data-g="C">C · Залежавшиеся<small>распродать</small></div>
+        <div class="ax">Маржа ниже нормы</div>
+        <div class="cell cB" data-g="B">B · Основа<small>сохранить, поправить цену</small></div>
+        <div class="cell cD" data-g="C">C · Залежавшиеся<small>распродать</small></div>
+        <div class="cell cE" data-g="D">D · Балласт<small>вывести</small></div>
+        <div></div>
+        <div class="ax x">запаса до 60 дней</div><div class="ax x">60–90 дней</div><div class="ax x">больше 90 дней</div>
+      </div>
+      <p class="note" style="margin-top:12px">Дни запаса = остаток / средние продажи в день за 4 недели, порог 60 дней — остаток сезона. Норма маржи — прибыль на единицу после рекламы, логистики и возвратов от 15% цены. <b style="color:var(--ink)">Метка «!» — возвраты:</b> ставлю поверх любой группы, если выкуп ниже среднего по категории на 10 пунктов и больше.</p>
+    </div>
+    <div class="col groups" id="grp">
+      <div class="g" data-g="A"><div class="l cA">A</div><div><h3>Хиты — докупать и продвигать</h3><p>Ходовые размеры держу в наличии. Дозаказ в этом сезоне — только если фабрика шьёт из готовой ткани и товар успевает доехать. Не успевает — поднимаю цену и снижаю рекламу, чтобы хит не опустел, а модель ставлю в первую волну следующего сезона.</p></div></div>
+      <div class="g" data-g="B"><div class="l cB">B</div><div><h3>Основа — сохранить</h3><p>Без уценки, реклама точечно. Базовые цвета, которые продаются круглый год, переходят в следующий сезон.</p></div></div>
+      <div class="g" data-g="C"><div class="l cD">C</div><div><h3>Залежавшиеся — распродать</h3><p>Скидки ступенями, комплекты, акции площадки, второй канал.</p></div></div>
+      <div class="g" data-g="D"><div class="l cE">D</div><div><h3>Балласт — вывести</h3><p>Сразу в акции площадки, остаток — оптом стоковым компаниям. В следующую закупку не берём.</p></div></div>
+      <div class="g" data-g="R"><div class="l" style="background:var(--soft);color:var(--ink2)">!</div><div><h3>Возвраты — исправить</h3><p>Правлю таблицу размеров, добавляю замеры и фото на разных фигурах, разбираю отзывы. Реклама на паузе, пока выкуп не вырастет. Не помогло за 3–4 недели — в группу D.</p></div></div>
+      <p class="note" style="margin-top:10px"><i>Данные для разбивки:</i> остатки по модели, цвету и размеру · продажи и выкуп за 4 недели · прибыль на единицу после рекламы, логистики и возвратов · хранение · продажи этих недель в прошлом году · товар в пути и в производстве.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Лаврушко Ярослав · Тестовое задание</span><span class="pg"></span></div>
+</section>
+
+<!-- 8. Задание 2: распродажа + калькулятор -->
+<section class="slide" data-title="Задание 2. План по остаткам">
+  <div class="kicker"><b>Задание 2</b> · Снижение избыточных остатков</div>
+  <h2>8 недель до конца сезона: по каждой модели считаю, что выгоднее — продать сейчас или хранить год</h2>
+  <div class="body" style="gap:30px">
+    <div class="col" style="flex:1.15">
+      <div class="ladder">
+        <div class="step"><div class="w">Недели 1–2</div><h3>Остановить закупку и рассортировать</h3><ul class="clean"><li>Стоп дозаказа сезонных моделей групп B–D</li><li>C: первая скидка 10–15%, акции площадки</li><li>D: сразу в акции, запрос цены у стоковых оптовиков</li><li>Реклама — на A и на C, где после скидки есть прибыль</li></ul></div>
+        <div class="step"><div class="w">Недели 3–5</div><h3>Ускорить</h3><ul class="clean"><li>Вторая ступень 20–30% там, где продажи не ускорились</li><li>Комплекты, «второй товар со скидкой»</li><li>Остатки C со своего склада — на второй канал. Что уже на складах WB, продаю там</li></ul></div>
+        <div class="step" style="border-color:var(--red)"><div class="w">Недели 6–8</div><h3>Закрыть сезон</h3><ul class="clean"><li>C и D: финальная скидка 40% и глубже</li><li>Остаток — стоковым оптовикам</li><li>Базовые модели B — на хранение до следующего сезона</li></ul></div>
+      </div>
+      <div class="card" style="margin-top:18px">
+        <h3>Учёт маржи</h3>
+        <p style="font-size:14.5px">Модели с высокой маржой уцениваю раньше и глубже — там есть куда снижать. У моделей с низкой маржой скидка быстро уходит в минус, поэтому их сразу веду в акции площадки и к оптовикам. Цель к концу сезона — по сезонным моделям не больше месяца запаса вместо трёх.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h3>Продать сейчас или хранить? <span class="note" style="font-weight:400">— одна единица, цифры примерные</span></h3>
+        <div class="calc">
+          <div><label>Цена продажи, ₽</label><input type="number" id="cP" value="3000" step="100"></div>
+          <div><label>Комиссия площадки, %</label><input type="number" id="cC" value="25" step="1"></div>
+          <div><label>Логистика с учётом возвратов, ₽</label><input type="number" id="cL" value="250" step="10"></div>
+          <div><label>Хранение в месяц (свой склад), ₽</label><input type="number" id="cS" value="40" step="5"></div>
+          <div><label>Месяцев до следующего сезона</label><input type="number" id="cM" value="9" step="1"></div>
+          <div><label>Шанс продать по полной цене, %</label><input type="number" id="cH" value="60" step="5"></div>
+        </div>
+        <div class="result" style="margin-top:14px">
+          <div><div class="note">Если храним — получим, в пересчёте на сегодня</div><div style="font-size:28px;font-weight:700" id="cHold"></div></div>
+          <div style="margin-left:auto;text-align:right"><div class="note">Продавать сейчас выгоднее при скидке до</div><div class="big red" style="font-size:40px" id="cBe"></div></div>
+        </div>
+        <p class="note" style="margin-top:10px">Себестоимость уже потрачена и в сравнении не участвует: сравниваю только будущие деньги. Деньги, замороженные в товаре, считаю под 2% в месяц, как кредит. Что не продастся по полной цене, считаю за ноль — осторожная оценка.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Лаврушко Ярослав · Тестовое задание</span><span class="pg"></span></div>
+</section>
+
+<!-- 9. Задание 2: закупки -->
+<section class="slide" data-title="Задание 2. Закупки">
+  <div class="kicker"><b>Задание 2</b> · Планирование закупок и производства</div>
+  <h2>Чтобы ситуация не повторилась: заказываю у фабрики столько, сколько подтверждают продажи</h2>
+  <div class="body" style="gap:30px">
+    <div class="col">
+      <div class="act"><div class="n">1</div><div><h3>Две волны с учётом сроков фабрики</h3><p>Если от заказа до склада 2–3 месяца, сезонные модели — первая партия 65–70% плана, новинки тестирую до сезона. Под хиты заранее договариваюсь с фабрикой о резерве ткани и мощностей, решение по второй волне — по первым 3–4 неделям продаж. Базовые модели дозаказываю круглый год.</p></div></div>
+      <div class="act"><div class="n">2</div><div><h3>Бюджет закупки на сезон</h3><p>Сумма на товар считается от плана продаж и допустимого остатка на конец сезона. Сверх бюджета — только с согласия собственника.</p></div></div>
+      <div class="act"><div class="n">3</div><div><h3>Размерная сетка по факту</h3><p>Доли размеров считаю по спросу: заказы с учётом выкупа плюс поправка на дни, когда размера не было в наличии.</p></div></div>
+    </div>
+    <div class="col">
+      <div class="act"><div class="n">4</div><div><h3>Новинки — тестом</h3><p>Небольшая партия, масштаб — после 2–3 недель продаж и первых возвратов.</p></div></div>
+      <div class="act"><div class="n">5</div><div><h3>Стоп-правило</h3><p>Каждую неделю сравниваю продажи модели с плановой кривой сезона по прошлому году. Если за 4 недели продано меньше 70% от плана на эти недели, дозаказ останавливаю и в ту же неделю планирую уценку.</p></div></div>
+      <div class="act"><div class="n">6</div><div><h3>Цель на конец сезона</h3><p>Остаток сезонных моделей — не больше 15% закупленного.</p></div></div>
+      <div class="proof">Когда у нас сорвалась поставка, я пересобрал закупку: 8+ поставщиков вместо одного, защитный запас <b>1,1 млн ₽</b> по трём главным позициям держит <b>3 млн</b> выручки в месяц и окупается за 1,4 месяца. Тот же расчёт показывает и обратное — какой запас лишний.</div>
+    </div>
+  </div>
+  <div class="foot"><span>Лаврушко Ярослав · Тестовое задание</span><span class="pg"></span></div>
+</section>
+
+<!-- 10. Задание 3: 90 дней -->
+<section class="slide" data-title="Задание 3. План на 90 дней">
+  <div class="kicker"><b>Задание 3</b> · План на 90 дней</div>
+  <h2>Сначала срочное, потом правила. Результат — к 90-му дню</h2>
+  <div class="card" style="margin-top:18px;padding:10px 16px;border-left:3px solid var(--red);font-size:14.5px;color:var(--ink2)"><b style="color:var(--red)">Дни 1–7, не дожидаясь полной диагностики:</b> стоп дозаказа сезонных моделей групп B–D, отключение кампаний с минусом после рекламы, первая ступень скидок на группу C. Сезон не ждёт.</div>
+  <div class="tl" style="margin-top:12px">
+    <div class="ph"><div class="bar90"><i style="left:0;width:15.5%"></i></div><div class="d">Дни 1–14</div><h3>Изучаю</h3>
+      <div class="sec">Данные и отчёты</div>
+      <ul class="clean"><li>Прибыль за 12 месяцев по каналам и моделям</li><li>Движение денег, кредиты, отсрочки</li><li>Остатки по моделям, размерам и складам</li><li>Реклама по кампаниям, выкуп, возвраты</li><li>Себестоимость партий, план производства</li></ul>
+      <div class="sec">Процессы</div>
+      <ul class="clean"><li>Кто и как ставит цену, включает рекламу, заказывает товар</li><li>Встречи один на один с командой и собственником</li></ul>
+    </div>
+    <div class="ph"><div class="bar90"><i style="left:0;width:15.5%"></i></div><div class="d">Дни 1–14</div><h3>Ищу, где теряются деньги</h3>
+      <ul class="clean"><li>На каких моделях теряется маржа</li><li>Какая реклама не окупается</li><li>Сколько денег заморожено в остатках</li><li>Где у хитов пустые размеры</li><li>Какие решения ждут собственника</li><li>Сходятся ли отчёты с выплатами площадки</li></ul>
+      <div class="sec">На выходе</div>
+      <ul class="clean"><li>Список проблем, у каждой — сколько она стоит в месяц. Согласую с собственником</li></ul>
+    </div>
+    <div class="ph"><div class="bar90"><i style="left:15.5%;width:18%"></i></div><div class="d">Дни 15–30</div><h3>Первые изменения</h3>
+      <ul class="clean"><li>Правило окупаемости рекламы и лимит на модель</li><li>Минимальная цена по каждой модели</li><li>Вторая ступень распродажи и сверка с планом</li><li>Отчёт о прибыли по моделям каждый понедельник</li><li>Платёжный календарь на 8 недель вперёд</li></ul>
+    </div>
+    <div class="ph"><div class="bar90"><i style="left:33.5%;width:33%"></i></div><div class="d">Дни 31–60</div><h3>Регламенты и KPI</h3>
+      <ul class="clean"><li>Регламенты: цена, реклама, закупка в две волны, поставки на склады, возвраты</li><li>2–3 KPI на каждую функцию</li><li>Мотивация — процент от прибыли</li><li>Ритм встреч и один трекер задач</li><li>Одна таблица цифр по всем площадкам, которая обновляется сама</li></ul>
+      <div class="sec" style="margin-top:auto;color:var(--red)">Дни 61–90</div>
+      <ul class="clean"><li>Доводка и замер результата — цифры на следующем слайде</li></ul>
+    </div>
+  </div>
+  <div class="foot"><span>Лаврушко Ярослав · Тестовое задание</span><span class="pg"></span></div>
+</section>
+
+<!-- 11. Задание 3: результаты и полномочия -->
+<section class="slide" data-title="Задание 3. Результат и полномочия">
+  <div class="kicker"><b>Задание 3</b> · Результат к 90-му дню и полномочия</div>
+  <h2>Что можно измерить на 90-й день и кто что решает</h2>
+  <div class="body" style="gap:40px">
+    <div class="col" style="flex:1.05">
+      <table class="kpi">
+        <tr><td></td><td class="from note">сейчас</td><td class="to note" style="font-weight:400">к 90-му дню</td></tr>
+        <tr><td>Чистая маржа (прибыль в месяц)</td><td class="from">2% (0,5 млн)</td><td class="to">от 8% (≈1,5 млн)</td></tr>
+        <tr><td>Реклама, % выручки</td><td class="from">14%</td><td class="to">до 10%</td></tr>
+        <tr><td>Маржа до рекламы на моделях вне распродажи</td><td class="from">36%</td><td class="to">от 38%</td></tr>
+        <tr><td>Запас по сезонным моделям</td><td class="from">≈5 мес</td><td class="to">до 1 мес</td></tr>
+        <tr><td>Топ-20 моделей: ходовые размеры в наличии</td><td class="from">не считается</td><td class="to">95% дней</td></tr>
+        <tr><td>Прибыль по моделям</td><td class="from">нет</td><td class="to">каждый понедельник</td></tr>
+        <tr><td>Функции с KPI и владельцем</td><td class="from">нет</td><td class="to">все</td></tr>
+      </table>
+      <p class="note" style="margin-top:10px">Выручку не обещаю удержать на 25 млн: прибыль важнее. Даже если выручка вернётся к 20 млн, при новых правилах прибыль около 1,9 млн. Цель ставлю в доле от выручки: 90-й день придётся на межсезонье, а 8% — с запасом, распродажа и запоздавшие возвраты временно съедают часть эффекта. Месяцы сравниваю с прошлым годом.</p>
+    </div>
+    <div class="col rights">
+      <div><h3><span class="tag g">Решаю сам</span></h3>
+        <ul class="clean"><li>Цена в коридоре минимальной маржи</li><li>Реклама в пределах лимита</li><li>Уценка по утверждённой лестнице</li><li>Приоритеты и задачи команды</li><li>Подрядчики в пределах бюджета</li></ul></div>
+      <div><h3><span class="tag a">Согласую</span></h3>
+        <ul class="clean"><li>Бюджет закупки и план производства на сезон</li><li>Цена ниже минимальной маржи сверх лестницы</li><li>Найм и увольнение руководителей, фонд оплаты и мотивация</li><li>Новые каналы и категории</li><li>Кредиты и платежи вне плана</li></ul></div>
+      <p class="note" style="grid-column:1/-1">Если решение не попадает ни в одну колонку, в тот же день приношу собственнику готовый вариант с цифрами.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Лаврушко Ярослав · Тестовое задание</span><span class="pg"></span></div>
+</section>
+
+<!-- 12. Задание 4: структура -->
+<section class="slide" data-title="Задание 4. Структура и KPI">
+  <div class="kicker"><b>Задание 4</b> · Структура и KPI</div>
+  <h2>Четыре зоны, за каждую цифру отвечает один человек</h2>
+  <div class="org" style="margin-top:20px">
+    <div class="box">Собственник</div><div class="vl"></div>
+    <div class="box me">Операционный руководитель — прибыль, план, ритм</div><div class="vl"></div>
+    <div class="fns">
+      <div class="fn"><h3>Продажи на маркетплейсах</h3><div class="who">Менеджеры кабинетов WB, Ozon, Lamoda · реклама</div>
+        <div class="k">KPI</div><ul class="clean"><li>Прибыль канала после рекламы</li><li>Реклама в пределах лимита</li><li>Доля заказов без рекламы</li></ul></div>
+      <div class="fn"><h3>Товар</h3><div class="who">Ассортимент · закупки и производство</div>
+        <div class="k">KPI</div><ul class="clean"><li>Доля проданного за сезон</li><li>Дни запаса</li><li>Ходовые размеры хитов в наличии</li></ul></div>
+      <div class="fn"><h3>Поставки и логистика</h3><div class="who">Склад · отгрузки на склады площадок · возвраты</div>
+        <div class="k">KPI</div><ul class="clean"><li>Поставки в срок</li><li>Логистика и хранение, % выручки</li><li>Брак и возвраты с площадок снова в продаже за 3 дня</li></ul></div>
+      <div class="fn"><h3>Финансы и аналитика</h3><div class="who">Аналитик · бухгалтерия (можно на подряде)</div>
+        <div class="k">KPI</div><ul class="clean"><li>Отчёт в понедельник к 12:00</li><li>Расхождение с выплатами площадки до 1%</li><li>Без кассовых разрывов</li></ul></div>
+    </div>
+  </div>
+  <p class="note" style="margin-top:14px">Подрядчики встраиваются в те же зоны и отчитываются по тем же цифрам. Руководителям зон предложу процент от прибыли и согласую это с собственником к 60-му дню. <span class="green" style="font-weight:600">Свою команду я перевёл на процент от чистой прибыли и сам получал так же.</span></p>
+  <div class="foot"><span>Лаврушко Ярослав · Тестовое задание</span><span class="pg"></span></div>
+</section>
+
+<!-- 13. Задание 4: менеджмент и автоматизация -->
+<section class="slide" data-title="Задание 4. Ритм и автоматизация">
+  <div class="kicker"><b>Задание 4</b> · Регулярный менеджмент и автоматизация</div>
+  <h2>Какие встречи нужны и что автоматизировать первым</h2>
+  <div class="body" style="gap:36px">
+    <div class="col" style="flex:1.35">
+      <table class="rhythm">
+        <tr><th>Когда</th><th>Кто</th><th>О чём</th></tr>
+        <tr><td>Каждый день, 15 мин</td><td>Каналы и товар</td><td>Продажи вчера, остатки хитов, реклама за сутки. Только отклонения.</td></tr>
+        <tr><td>Понедельник, 1 ч</td><td>Руководители зон</td><td>Прибыль недели по моделям, остатки, реклама, деньги. Решения по цене, рекламе, закупке.</td></tr>
+        <tr><td>Раз в месяц, 2 ч</td><td>С собственником</td><td>План-факт прибыли, KPI, бюджеты следующего месяца.</td></tr>
+        <tr><td>Раз в сезон</td><td>С собственником</td><td>Коллекция, бюджет закупки, план производства, цели сезона.</td></tr>
+      </table>
+      <p style="font-size:14.5px;margin-top:14px"><b>Задачи</b> — в одном трекере. У каждой есть владелец, срок и результат в цифре. Просрочки разбираем в понедельник.<br><b>Решения</b> — по таблице полномочий. Спорное в пределах лимитов решаю сам, остальное выношу собственнику.</p>
+    </div>
+    <div class="col">
+      <h3>Автоматизировать первым</h3>
+      <ol class="auto">
+        <li>Выгрузка данных WB, Ozon и Lamoda в одну таблицу</li>
+        <li>Прибыль по моделям раз в неделю</li>
+        <li>Остатки в днях запаса: что дозаказать, что уценить</li>
+        <li>Сигнал, если кампания вышла за лимит рекламы</li>
+        <li>Движение денег и сверка выплат площадки</li>
+      </ol>
+      <div class="proof" style="margin-top:12px">В своей компании построил управленческий учёт с нуля и автоматизировал отчёты: недельный отчёт о деньгах — <b>50 минут → 5</b>. Месячный отчёт о прибыли собирается из выгрузок WB автоматически, 91% позиций сопоставляется без ручной работы.</div>
+    </div>
+  </div>
+  <div class="foot"><span>Лаврушко Ярослав · Тестовое задание</span><span class="pg"></span></div>
+</section>
+
+<!-- 14. Задание 5 -->
+<section class="slide" data-title="Задание 5. Ключевые точки">
+  <div class="kicker"><b>Задание 5</b> · Ключевые точки бизнеса в одежде</div>
+  <h2>На чём держится проект одежды на маркетплейсах</h2>
+  <div class="hz" style="margin-top:26px">
+    <div><div class="t">Месяц — квартал</div><h3>Не терять продажи</h3>
+      <div class="it"><b>Размеры хитов в наличии</b><p>Пустой ходовой размер у хита — минус позиции в выдаче, которые потом приходится откупать рекламой.</p></div>
+      <div class="it"><b>Прибыль по моделям каждую неделю</b><p>Цена, реклама и выкуп по каждой модели, решения — в тот же день.</p></div>
+      <div class="it"><b>Деньги</b><p>Платёжный календарь, чтобы закупка и реклама не съели оборотные средства.</p></div>
+    </div>
+    <div><div class="t">Полгода — год</div><h3>Попадать в сезон</h3>
+      <div class="it"><b>План сезона</b><p>Коллекция, бюджет закупки и сроки производства — так, чтобы товар приехал до пика спроса.</p></div>
+      <div class="it"><b>Выкуп</b><p>Посадка, лекала, честная карточка. Выше выкуп — ниже логистика на единицу и выше карточка в выдаче.</p></div>
+      <div class="it"><b>Второй и третий канал</b><p>Чтобы одно новое правило или тариф WB не обрушили все продажи.</p></div>
+    </div>
+    <div><div class="t">Год и дальше</div><h3>Бизнес не держится на одном человеке</h3>
+      <div class="it"><b>Бренд, к которому возвращаются</b><p>Повторные покупки, узнаваемость, свои каналы помимо маркетплейсов.</p></div>
+      <div class="it"><b>Продукт и производство</b><p>Стабильное качество и себестоимость, не одна фабрика.</p></div>
+      <div class="it"><b>Команда, которая работает без собственника</b><p>Цена, реклама и закупка идут по правилам, собственник смотрит отчёт в понедельник.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>Лаврушко Ярослав · Тестовое задание</span><span class="pg"></span></div>
+</section>
+
+<!-- 15. Финал -->
+<section class="slide" data-title="Что я уже делал">
+  <div class="kicker">Что из этого я уже делал</div>
+  <h2>Главные механики этого плана я уже внедрял в своей компании</h2>
+  <p class="lead">Директор торговой компании на Wildberries и Ozon: закупка, ассортимент, цена, команда и прибыль — целиком на мне. Реализация на Wildberries — 111 млн ₽ за 12 месяцев при маржинальности 23,5%.</p>
+  <div class="facts" style="margin-top:22px">
+    <div class="fact"><div class="v">8% → 2,3%</div><p>Доля рекламы в выручке, май → сентябрь 2025. Продажи за то же время выросли с 2 502 до 4 456 штук в месяц.</p><div class="s">Слайд 5 — правило окупаемости</div></div>
+    <div class="fact"><div class="v">18,9% → 25%</div><p>Маржинальность на Wildberries за девять месяцев: юнит-экономика по каждому товару, пересобранное ценообразование.</p><div class="s">Слайд 5 — вернуть маржу</div></div>
+    <div class="fact"><div class="v">4 → 10 <small>млн ₽</small></div><p>Прибыль за апрель–июль 2026 против тех же месяцев 2025. Реализация 21,9 → 41 млн.</p><div class="s">Рост без сезонного эффекта</div></div>
+    <div class="fact"><div class="v">+58%</div><p>Средний чек за семь месяцев после пересборки ассортимента. Цены в категории за это время выросли на 5%.</p><div class="s">Слайд 7 — работа с ассортиментом</div></div>
+    <div class="fact"><div class="v">50 → 5 <small>мин</small></div><p>Недельный отчёт о деньгах. Управленческий учёт построил с нуля: прибыль, движение денег, финмодель.</p><div class="s">Слайд 13 — автоматизация</div></div>
+    <div class="fact"><div class="v">% от прибыли</div><p>Перевёл команду на процент от чистой прибыли. Вырастил сотрудника от ассистента до руководителя направления.</p><div class="s">Слайд 12 — команда</div></div>
+  </div>
+  <p style="margin-top:20px;font-size:15px;color:var(--ink)">Telegram @GLUBOK0SLAV · yaroslav.loverushko@gmail.com · <a href="https://yaroslav-lavrushko.github.io" style="color:var(--ink)">yaroslav-lavrushko.github.io</a></p>
+  <div class="foot"><span>Лаврушко Ярослав · Тестовое задание</span><span class="pg"></span></div>
+</section>
+
+</div>
+
+<div id="toc"></div>
+<div id="nav"><span id="cnt"></span><button id="toc-btn">Содержание</button><button id="prev" aria-label="Назад">←</button><button id="next" aria-label="Вперёд">→</button></div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+const N=slides.length;
+let cur=0;
+const fmt=(v,d=1)=>v.toLocaleString('ru-RU',{minimumFractionDigits:d,maximumFractionDigits:d});
+
+/* навигация */
+function go(i){
+  cur=Math.max(0,Math.min(N-1,i));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===cur));
+  document.getElementById('cnt').textContent=(cur+1)+' / '+N;
+  document.getElementById('prog').style.width=((cur+1)/N*100)+'%';
+  history.replaceState(null,'','#'+(cur+1));
+}
+slides.forEach((s,k)=>{const p=s.querySelector('.pg');if(p)p.textContent=(k+1)+' / '+N});
+document.getElementById('prev').onclick=()=>go(cur-1);
+document.getElementById('next').onclick=()=>go(cur+1);
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT')return;
+  if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(cur+1)}
+  if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(cur-1)}
+  if(e.key==='Home')go(0); if(e.key==='End')go(N-1);
+  if(e.key==='Escape')toc.classList.remove('open');
+});
+const toc=document.getElementById('toc');
+toc.innerHTML=slides.map((s,k)=>`<a href="#${k+1}" data-i="${k}"><span>${k+1}</span>${s.dataset.title}</a>`).join('');
+toc.onclick=e=>{const a=e.target.closest('a');if(a){e.preventDefault();go(+a.dataset.i);toc.classList.remove('open')}};
+document.getElementById('toc-btn').onclick=()=>toc.classList.toggle('open');
+
+/* масштаб */
+const stage=document.getElementById('stage');
+function fit(){
+  if(innerWidth<900){document.body.classList.add('scroll');stage.style.transform='';return}
+  document.body.classList.remove('scroll');
+  const s=Math.min(innerWidth/1280,(innerHeight-56)/720)*0.98;
+  stage.style.transform=`translate(-50%,calc(-50% - 18px)) scale(${s})`;
+}
+addEventListener('resize',fit);fit();
+addEventListener('beforeprint',()=>document.body.classList.remove('scroll'));
+addEventListener('afterprint',fit);
+go(Math.max(0,(parseInt(location.hash.slice(1))||1)-1));
+
+/* модель прибыли */
+function pnl(rev,md,ad,lg,mode){
+  const pre=rev*(md-ad-lg)/100;
+  const tax=mode==='rev'?rev*0.06:Math.max(pre,0)*0.06;
+  return {pre,tax,net:pre-tax};
+}
+
+/* задание 1: таблица */
+let taxMode='rev';
+const A={rev:20,md:8,ad:2,lg:3}, B={rev:25,md:9,ad:3.5,lg:3.5};
+function pct(v,r){return fmt(v/r*100,0)+'%'}
+function renderFin(){
+  const pa=pnl(A.rev,A.md/A.rev*100,A.ad/A.rev*100,A.lg/A.rev*100,taxMode);
+  const pb=pnl(B.rev,B.md/B.rev*100,B.ad/B.rev*100,B.lg/B.rev*100,taxMode);
+  const ch=(a,b,pp)=>{const d=b-a;const s=(d>0?'+':d<0?'−':'')+fmt(Math.abs(d));return s+(pp?`<small>${pp}</small>`:'')};
+  const ppDelta=(a,ra,b,rb)=>{const d=b/rb*100-a/ra*100;return (d>0?'+':'−')+fmt(Math.abs(d),0)+' п.п.'};
+  const rows=[
+    ['Выручка',A.rev,B.rev,'',ch(A.rev,B.rev,'+25%')],
+    ['Маржинальный доход до рекламы',A.md,B.md,'pct',ch(A.md,B.md,ppDelta(A.md,A.rev,B.md,B.rev))],
+    ['Реклама',A.ad,B.ad,'pct',ch(A.ad,B.ad,ppDelta(A.ad,A.rev,B.ad,B.rev))],
+    ['Логистика, возвраты, прочее',A.lg,B.lg,'pct',ch(A.lg,B.lg,ppDelta(A.lg,A.rev,B.lg,B.rev))],
+    ['Прибыль до налога',pa.pre,pb.pre,'pct',ch(pa.pre,pb.pre),'sub'],
+    [taxMode==='rev'?'Налог 6% с выручки':'Налог 6% с прибыли',pa.tax,pb.tax,'',ch(pa.tax,pb.tax)],
+    ['Чистая прибыль',pa.net,pb.net,'pct',ch(pa.net,pb.net,(pb.net<pa.net?'−':'+')+fmt(Math.abs(pb.net/pa.net-1)*100,0)+'%'),'total'],
+  ];
+  const d=taxMode==='rev'?1:2;
+  document.getElementById('finT').innerHTML='<tr><th>Показатель</th><th>Прошлый</th><th>Текущий</th><th>Изменение</th></tr>'+
+    rows.map(r=>`<tr class="${r[5]||''}"><td>${r[0]}</td><td>${fmt(r[1],r[0].startsWith('Налог')||r[0]==='Чистая прибыль'?d:1)}${r[3]?`<small>${pct(r[1],A.rev)}</small>`:''}</td><td>${fmt(r[2],r[0].startsWith('Налог')||r[0]==='Чистая прибыль'?d:1)}${r[3]?`<small>${pct(r[2],B.rev)}</small>`:''}</td><td class="${r[0]==='Чистая прибыль'||r[0]==='Прибыль до налога'?'red':''}">${r[4]}</td></tr>`).join('');
+  document.getElementById('taxNote').textContent=taxMode==='rev'
+    ?'В задании база налога не указана, считаю 6% со всей выручки, как на УСН «доходы». НДС на таких оборотах поставлю отдельной строкой, когда увижу ваш режим: он одинаково уменьшает прибыль до и после изменений, эффект действий не меняется. Все цели в презентации — до НДС.'
+    :'Если налог с прибыли: чистая прибыль 2,82 → 1,88 млн (−33%), график на следующем слайде пересчитан. Заголовки и текст слайдов 2–3 — для 6% с выручки. Вывод тот же: выручка выросла, заработали меньше.';
+  renderWF();
+}
+document.getElementById('taxT').onclick=e=>{const b=e.target.closest('button');if(!b)return;taxMode=b.dataset.m;
+  [...e.currentTarget.children].forEach(x=>x.classList.toggle('on',x===b));renderFin()};
+
+/* водопад */
+function renderWF(){
+  const t=taxMode==='rev'?0.06:0, k=taxMode==='rev'?1:0.94;
+  const start=pnl(20,40,10,15,taxMode).net, end=pnl(25,36,14,14,taxMode).net;
+  const vol=5*(0.40-0.10-0.15-t)*k, mar=-1*k, ads=-1*k, lg=0.25*k;
+  const steps=[
+    {l:'Прошлый месяц',v:start,abs:true,tip:`Чистая прибыль прошлого месяца: ${fmt(start,2)} млн`},
+    {l:'Рост выручки',v:vol,tip:`+5 млн выручки при прошлой структуре затрат: 5 × (40% − 10% − 15%${t?' − 6%':''})${k<1?' × 0,94':''} = ${fmt(vol,2)} млн`},
+    {l:'Маржа 40 → 36%',v:mar,tip:`Маржа просела на 4 п.п. на выручке 25 млн: −1,0 млн${k<1?' (после налога −0,94)':''}. Скидки, акции, дешёвые модели, себестоимость`},
+    {l:'Реклама 10 → 14%',v:ads,tip:`При прежних 10% реклама стоила бы 2,5 млн, факт — 3,5 млн: −1,0 млн${k<1?' (после налога −0,94)':''}`},
+    {l:'Логистика 15 → 14%',v:lg,tip:`При прежних 15% было бы 3,75 млн, факт — 3,5 млн: +0,25 млн${k<1?' (после налога +0,24)':''}`},
+    {l:'Текущий месяц',v:end,abs:true,tip:`Чистая прибыль текущего месяца: ${fmt(end,2)} млн`},
+  ];
+  const W=720,H=380,top=30,bot=60,maxV=(start+vol)*1.12,sc=(H-top-bot)/maxV;
+  const y=v=>H-bot-v*sc, bw=78, gap=(W-steps.length*bw)/(steps.length+1);
+  let acc=0,svg='';
+  svg+=`<line x1="0" x2="${W}" y1="${y(0)}" y2="${y(0)}" stroke="#1D1C1A" stroke-width="1"/>`;
+  steps.forEach((s,i)=>{
+    const x=gap+i*(bw+gap);
+    let y0,y1,col;
+    if(s.abs){y0=0;y1=s.v;col='#1D1C1A';acc=s.v}
+    else{y0=acc;y1=acc+s.v;acc=y1;col=s.v>=0?'#2E6B4E':'#B3412A'}
+    const yt=y(Math.max(y0,y1)),h=Math.abs(y1-y0)*sc;
+    svg+=`<rect class="bar" data-i="${i}" x="${x}" y="${yt}" width="${bw}" height="${Math.max(h,2)}" fill="${col}" rx="2"/>`;
+    if(i<steps.length-1){const nx=x+bw+gap;svg+=`<line x1="${x+bw}" x2="${nx}" y1="${y(acc)}" y2="${y(acc)}" stroke="#77716A" stroke-dasharray="3 3"/>`}
+    const lab=s.abs?fmt(s.v,s.v<1?1:1):(s.v>0?'+':'−')+fmt(Math.abs(s.v),2).replace(/0$/,'');
+    svg+=`<text x="${x+bw/2}" y="${yt-9}" text-anchor="middle" font-size="17" font-weight="700" fill="${s.abs?'#1D1C1A':col}" font-family="Golos Text, sans-serif">${lab}</text>`;
+    const parts=s.l.split(' ');const l1=parts.length>2?parts[0]:s.l, l2=parts.length>2?parts.slice(1).join(' '):'';
+    svg+=`<text x="${x+bw/2}" y="${H-bot+22}" text-anchor="middle" font-size="13" fill="#3E3B36" font-family="Golos Text, sans-serif">${parts.length>2?l1:s.l.split(' ')[0]}</text>`;
+    svg+=`<text x="${x+bw/2}" y="${H-bot+39}" text-anchor="middle" font-size="13" fill="#77716A" font-family="Golos Text, sans-serif">${parts.length>2?l2:s.l.split(' ').slice(1).join(' ')}</text>`;
+  });
+  svg+=`<text x="0" y="16" font-size="12" fill="#77716A" font-family="Golos Text, sans-serif">Чистая прибыль, млн ₽</text>`;
+  const el=document.getElementById('wf');el.innerHTML=svg;
+  const tip=document.getElementById('wfTip');
+  el.querySelectorAll('.bar').forEach(r=>{
+    r.addEventListener('mouseenter',()=>{tip.textContent=steps[+r.dataset.i].tip;tip.style.opacity=1});
+    r.addEventListener('mousemove',e=>{const b=el.parentNode.getBoundingClientRect(),s=b.width/el.parentNode.offsetWidth;
+      tip.style.left=Math.min((e.clientX-b.left)/s+12,el.parentNode.offsetWidth-250)+'px';tip.style.top=((e.clientY-b.top)/s+12)+'px'});
+    r.addEventListener('mouseleave',()=>tip.style.opacity=0);
+  });
+}
+renderFin();
+
+/* симулятор */
+const P=[[25,36,14,14],[25,38.5,10,13],[20,38.5,10,13]];
+const notes=['Это текущий месяц. Подвигайте ползунки или выберите сценарий.',
+  'Выручка та же, три действия вместе: прибыль почти впятеро выше.',
+  'Даже если без лишней рекламы выручка вернётся к прошлым 20 млн, прибыль будет около 1,9 млн — почти вчетверо больше текущей.'];
+const ids=['sRev','sMd','sAd','sLg'].map(i=>document.getElementById(i));
+function sim(){
+  const [r,m,a,l]=ids.map(i=>+i.value);
+  document.getElementById('vRev').textContent=fmt(r);
+  document.getElementById('vMd').textContent=fmt(m)+'%';
+  document.getElementById('vAd').textContent=fmt(a)+'%';
+  document.getElementById('vLg').textContent=fmt(l)+'%';
+  const o=pnl(r,m,a,l,'rev');
+  const n=document.getElementById('oNet');n.textContent=fmt(o.net,2)+' млн';n.style.color=o.net<0?'var(--red)':'var(--ink)';
+  document.getElementById('oPct').textContent=fmt(o.net/r*100)+'%';
+  const d=o.net-0.5,dd=document.getElementById('oDelta');dd.textContent=(d>=0?'+':'−')+fmt(Math.abs(d),2);dd.style.color=d>=0?'var(--green)':'var(--red)';
+}
+function preset(i){P[i].forEach((v,k)=>ids[k].value=v);document.querySelectorAll('#presets button').forEach((b,k)=>b.classList.toggle('on',k===i));
+  document.getElementById('simNote').textContent=notes[i];sim()}
+document.getElementById('presets').onclick=e=>{const b=e.target.closest('button');if(b)preset(+b.dataset.p)};
+ids.forEach(i=>i.addEventListener('input',()=>{document.querySelectorAll('#presets button').forEach(b=>b.classList.remove('on'));
+  document.getElementById('simNote').textContent='Свой сценарий. Налог — 6% с выручки.';sim()}));
+preset(0);
+
+/* сегментация: подсветка */
+function hl(g){document.querySelectorAll('[data-g]').forEach(x=>x.classList.toggle('hl',x.dataset.g===g))}
+document.querySelectorAll('#mx .cell,#grp .g').forEach(c=>{c.addEventListener('mouseenter',()=>hl(c.dataset.g));c.addEventListener('mouseleave',()=>hl(null))});
+
+/* калькулятор: продать или хранить */
+const cid=['cP','cC','cL','cS','cM','cH'].map(i=>document.getElementById(i));
+function calc(){
+  const [p,c,l,s,m,h]=cid.map(i=>+i.value||0);
+  const full=p*(1-c/100)-l;
+  const hold=full*h/100/Math.pow(1.02,m)-s*m;
+  // продать сейчас со скидкой d: p(1-d)(1-c)-l = hold
+  const d=1-(hold+l)/(p*(1-c/100));
+  document.getElementById('cHold').textContent=Math.round(hold).toLocaleString('ru-RU')+' ₽';
+  document.getElementById('cBe').textContent=d<=0?'0%':Math.min(99,Math.round(d*100))+'%';
+}
+cid.forEach(i=>i.addEventListener('input',calc));calc();
+</script>
+</body>
+</html>
