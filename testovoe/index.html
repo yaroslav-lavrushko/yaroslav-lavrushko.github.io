@@ -141,6 +141,9 @@ table.kpi td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:
 table.kpi td:first-child{padding-left:0;color:var(--ink2)}
 table.kpi td.from{color:var(--muted);text-align:right;white-space:nowrap}
 table.kpi td.to{font-weight:700;white-space:nowrap}
+table.kpi.fit td{font-size:14px}
+table.kpi.fit td.to{white-space:normal;font-weight:600}
+table.kpi.fit td:first-child{width:118px}
 .rights{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .rights h3{display:flex;align-items:center;gap:8px}
 .rights li{font-size:14px}
@@ -638,7 +641,39 @@ body.scroll .cell small{display:none}
   <div class="foot"><span>Лаврушко Ярослав · Тестовое задание</span><span class="pg"></span></div>
 </section>
 
-<!-- 15. Финал -->
+<!-- 15. Витрина -->
+<section class="slide" data-title="Что видно по вашей витрине">
+  <div class="kicker"><b>Приложение</b> · Ваша витрина на Wildberries, данные MPSTATS</div>
+  <h2>У хитов кончается товар, а та же модель на соседних карточках продаётся в 6–16 раз медленнее</h2>
+  <div class="body" style="gap:32px">
+    <div class="col" style="flex:1.35">
+      <table class="rhythm">
+        <tr><th>Свитер</th><th>Карточка-хит</th><th>Та же модель на других карточках</th></tr>
+        <tr><td>Синий в косичку</td><td>3 220 ₽ · 327 продаж<br><b class="red">запас на 3 дня</b>, в наличии 5 из 11 размеров</td><td>3 761–3 894 ₽ · 96 продаж<br><b>428 шт</b>, запас на 112–178 дней, размеры в наличии</td></tr>
+        <tr><td>Чёрный в косичку</td><td>3 220 ₽ · 280 продаж<br><b class="red">запас на 11 дней</b></td><td>3 894 ₽ · 17 продаж<br><b>224 шт</b>, запас на 407 дней</td></tr>
+      </table>
+      <p class="note" style="margin-top:8px">Последние 30 дней, артикулы 468757228 и 468757227 против 1244306856, 1244217189 и 1244319619.</p>
+      <div class="card" style="margin-top:16px;border-left:3px solid var(--red)">
+        <h3>Что сделал бы в первую неделю</h3>
+        <p style="font-size:14.5px">Свести остаток к карточкам, которые продаются: вынести 1244306856 и 1244319619 в одну карточку с хитами и выровнять цену к 3 220 ₽, если разница не идёт от партии или ткани. Если это тест цены, итог уже виден: дороже на 17–21%, продажи в 6–16 раз ниже. Хиты не опустеют в пик сезона, а часть «пяти месяцев запаса» уйдёт без уценки.</p>
+      </div>
+    </div>
+    <div class="col">
+      <h3>Как это сходится с заданием</h3>
+      <table class="kpi fit">
+        <tr><td>Выручка выросла</td><td class="to">сентябрь → октябрь +20%</td></tr>
+        <tr><td>Маржа просела</td><td class="to">тонкие джемперы-кардиганы на молнии: цена 4 507 → 3 209 ₽ (−29%) — первое, что проверю в разрезе маржи</td></tr>
+        <tr><td>Запас на 5 месяцев</td><td class="to">56% штук — залежавшийся остаток по оценке MPSTATS; кардиганам хватит на 145 дней, свитерам на 42</td></tr>
+        <tr><td>Много возвратов</td><td class="to">выкуп 32–40% в основных категориях: свитеры 32%, джемперы 40% (оценка MPSTATS)</td></tr>
+        <tr><td>Сезон кончается</td><td class="to">прошлый год: декабрь 44,5 млн → январь 18,9 млн</td></tr>
+      </table>
+      <p class="note" style="margin-top:10px">Внешние данные MPSTATS, 03.10–02.11.2026. С августа WB скрывает часть остатков, поэтому суммы занижены; опираюсь на доли и направление. На ваших отчётах пересчитаю за первую неделю.</p>
+    </div>
+  </div>
+  <div class="foot"><span>Лаврушко Ярослав · Тестовое задание</span><span class="pg"></span></div>
+</section>
+
+<!-- 16. Финал -->
 <section class="slide" data-title="Что я уже делал">
   <div class="kicker">Что из этого я уже делал</div>
   <h2>Главные механики этого плана я уже внедрял в своей компании</h2>
